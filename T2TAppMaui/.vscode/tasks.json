@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run .NET MAUI App",
+			"type": "shell",
+			"command": "dotnet build && dotnet run --project T2TApp/T2TApp.csproj",
+			"isBackground": false,
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		}
+	]
+}
