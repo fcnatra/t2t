@@ -1,0 +1,60 @@
+@inject HttpClient Http
+
+<h3>Dirección IP pública actual:</h3>
+<p>@ipActual</p>
+
+@if (notificacionVisible)
+{
+    <div class="alert alert-info">¡La IP ha cambiado a @ipActual!</div>
+}
+
+@code {
+    private string ipActual = "Cargando...";
+    private string ipAnterior;
+    private bool notificacionVisible = false;
+    private System.Threading.Timer timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ipActual = await ObtenerIpPublicaAsync();
+        ipAnterior = ipActual;
+        timer = new System.Threading.Timer(async _ => await VerificarCambioIp(), null, 0, 5000); // Cada 5 segundos
+    }
+
+    private async Task VerificarCambioIp()
+    {
+        var nuevaIp = await ObtenerIpPublicaAsync();
+        if (nuevaIp != ipActual)
+        {
+            ipAnterior = ipActual;
+            ipActual = nuevaIp;
+            notificacionVisible = true;
+            await InvokeAsync(StateHasChanged);
+            _ = OcultarNotificacion();
+        }
+    }
+
+    private async Task OcultarNotificacion()
+    {
+        await Task.Delay(3000);
+        notificacionVisible = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<string> ObtenerIpPublicaAsync()
+    {
+        try
+        {
+            return await Http.GetStringAsync("https://api.ipify.org");
+        }
+        catch
+        {
+            return "No detectada";
+        }
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
