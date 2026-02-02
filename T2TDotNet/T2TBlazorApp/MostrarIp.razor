@@ -1,3 +1,4 @@
+@using System.Collections.Specialized
 @inject HttpClient Http
 
 <h3>Dirección IP pública actual:</h3>
@@ -10,9 +11,9 @@
 
 @code {
     private string ipActual = "Cargando...";
-    private string ipAnterior;
+    private string ipAnterior = string.Empty;
     private bool notificacionVisible = false;
-    private System.Threading.Timer timer;
+    private System.Threading.Timer? timer;
 
     protected override async Task OnInitializedAsync()
     {
